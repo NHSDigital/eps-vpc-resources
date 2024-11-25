@@ -57,8 +57,13 @@
         "editor.formatOnSave": true, // optional
         "editor.formatOnSaveMode": "file",
         "cSpell.words": ["fhir", "Formik", "pino", "serialisation"],
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "[typescript]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "always"
+        }
       }
     }
   },
