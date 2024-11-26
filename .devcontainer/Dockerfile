@@ -28,7 +28,7 @@ RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3; \
     echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc; \
     echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc;
 
-ENV PATH="$PATH:/home/vscode/.asdf/bin/:/workspaces/eps-prescription-tracker-ui/node_modules/.bin"
+ENV PATH="$PATH:/home/vscode/.asdf/bin/:/workspaces/eps-vpc-resources/node_modules/.bin"
 
 
 # Install ASDF plugins
@@ -41,8 +41,8 @@ RUN asdf plugin add python; \
     asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 
 
-WORKDIR /workspaces/eps-prescription-tracker-ui
-ADD .tool-versions /workspaces/eps-prescription-tracker-ui/.tool-versions
+WORKDIR /workspaces/eps-vpc-resources
+ADD .tool-versions /workspaces/eps-resources/.tool-versions
 ADD .tool-versions /home/vscode/.tool-versions
 
 RUN asdf install; \
