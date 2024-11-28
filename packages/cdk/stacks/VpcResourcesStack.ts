@@ -1,12 +1,18 @@
 import {
   App,
   CfnOutput,
+  CfnResource,
   Fn,
   RemovalPolicy,
   Stack,
   StackProps
 } from "aws-cdk-lib"
-import {FlowLogDestination, IpAddresses, Vpc} from "aws-cdk-lib/aws-ec2"
+import {
+  CfnSubnet,
+  FlowLogDestination,
+  IpAddresses,
+  Vpc
+} from "aws-cdk-lib/aws-ec2"
 import {Role, ServicePrincipal} from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {LogGroup} from "aws-cdk-lib/aws-logs"
@@ -54,6 +60,30 @@ export class VpcResourcesStack extends Stack {
         }
       }
     })
+
+    // Add cfn-guard suppressions
+    for (const subnet of vpc.publicSubnets) {
+      const cfnSubnet = subnet.node.defaultChild as CfnSubnet
+      cfnSubnet.cfnOptions.metadata = {
+        guard:
+        {
+          SuppressedRules:[
+            "SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED"
+          ]
+        }
+      }
+
+      const cfnSubnetAsChild = vpc.node.tryFindChild(subnet.node.id) as CfnResource
+      const cfnDefaultRoute = cfnSubnetAsChild.node.tryFindChild("DefaultRoute") as CfnResource
+      cfnDefaultRoute.cfnOptions.metadata = {
+        guard:
+        {
+          SuppressedRules:[
+            "NO_UNRESTRICTED_ROUTE_TO_IGW"
+          ]
+        }
+      }
+    }
 
     //Outputs
 

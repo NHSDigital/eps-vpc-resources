@@ -2,6 +2,7 @@ import {App, Aspects, Tags} from "aws-cdk-lib"
 import {AwsSolutionsChecks} from "cdk-nag"
 
 import {VpcResourcesStack} from "../stacks/VpcResourcesStack"
+import {addCfnGuardMetadata} from "./utils/appUtils"
 
 const app = new App()
 /* Required Context:
@@ -18,10 +19,12 @@ Tags.of(app).add("version", version)
 Tags.of(app).add("commit", commit)
 Tags.of(app).add("cdkApp", "VpcResourcesApp")
 
-new VpcResourcesStack(app, "VpcResourcesStack", {
+const VpcResources = new VpcResourcesStack(app, "VpcResourcesStack", {
   env: {
     region: "eu-west-2"
   },
   stackName: "vpc-resources",
   version: version
 })
+
+addCfnGuardMetadata(VpcResources, "Custom::VpcRestrictDefaultSGCustomResourceProvider", "Handler")

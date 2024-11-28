@@ -85,12 +85,10 @@ jobs:
           --arg VERSION_NUMBER "${{ inputs.VERSION_NUMBER }}" \
           --arg COMMIT_ID "${{ inputs.COMMIT_ID }}" \
           --arg logRetentionInDays "${{ inputs.LOG_RETENTION_IN_DAYS }}" \
-          --argjson allowAutoDeleteObjects "true" \
           '.context += {
             "VERSION_NUMBER": $VERSION_NUMBER,
             "COMMIT_ID": $COMMIT_ID,
-            "logRetentionInDays": $logRetentionInDays,
-            "allowAutoDeleteObjects": $allowAutoDeleteObjects}' \
+            "logRetentionInDays": $logRetentionInDays}' \
           .build/cdk.json > .build/cdk.new.json
           mv .build/cdk.new.json .build/cdk.json
 

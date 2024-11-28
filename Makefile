@@ -82,7 +82,6 @@ cdk-synth:
 		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
 		--context VERSION_NUMBER=undefined \
 		--context COMMIT_ID=undefined \
-		--context allowAutoDeleteObjects=true \
 		--context logRetentionInDays=30
 
 cdk-diff:
