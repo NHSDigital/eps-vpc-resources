@@ -27,4 +27,12 @@ const VpcResources = new VpcResourcesStack(app, "VpcResourcesStack", {
   version: version
 })
 
+// run a synth to add custom resource lambdas and roles
+app.synth()
+
 addCfnGuardMetadata(VpcResources, "Custom::VpcRestrictDefaultSGCustomResourceProvider", "Handler")
+
+// finally run synth again with force to include the added metadata
+app.synth({
+  force: true
+})
