@@ -110,7 +110,7 @@ jobs:
         shell: bash
 
       - name: Deploy code
-        if: inputs.DEPLOY_CHANGE == 'true'
+        if: ${{ inputs.DEPLOY_CHANGE == 'true'}}
         run: |
           docker run \
           -v "$(pwd)/.build":/home/cdkuser/workspace/ \
