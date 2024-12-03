@@ -91,13 +91,15 @@ export class VpcResourcesStack extends Stack {
       }
     }
 
+    this.vpc = vpc
+
     // add vpc private endpoints
     this.addInterfaceEndpoint("ECRDockerEndpoint", InterfaceVpcEndpointAwsService.ECR_DOCKER)
     this.addInterfaceEndpoint("ECREndpoint", InterfaceVpcEndpointAwsService.ECR)
     this.addInterfaceEndpoint("SecretManagerEndpoint", InterfaceVpcEndpointAwsService.SECRETS_MANAGER)
     this.addInterfaceEndpoint("CloudWatchEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH)
     this.addInterfaceEndpoint("CloudWatchLogsEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS)
-    this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH_EVENTS)
+    this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
     this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
 
     //Outputs
