@@ -10,7 +10,10 @@ import {
 import {
   CfnSubnet,
   FlowLogDestination,
+  InterfaceVpcEndpoint,
+  InterfaceVpcEndpointAwsService,
   IpAddresses,
+  Peer,
   Vpc
 } from "aws-cdk-lib/aws-ec2"
 import {Role, ServicePrincipal} from "aws-cdk-lib/aws-iam"
@@ -28,6 +31,7 @@ export interface VpcResourcesStackProps extends StackProps{
  */
 
 export class VpcResourcesStack extends Stack {
+  readonly vpc : Vpc
   public constructor(scope: App, id: string, props: VpcResourcesStackProps){
     super(scope, id, props)
 
@@ -87,6 +91,17 @@ export class VpcResourcesStack extends Stack {
       }
     }
 
+    this.vpc = vpc
+
+    // add vpc private endpoints
+    this.addInterfaceEndpoint("ECRDockerEndpoint", InterfaceVpcEndpointAwsService.ECR_DOCKER)
+    this.addInterfaceEndpoint("ECREndpoint", InterfaceVpcEndpointAwsService.ECR)
+    this.addInterfaceEndpoint("SecretManagerEndpoint", InterfaceVpcEndpointAwsService.SECRETS_MANAGER)
+    this.addInterfaceEndpoint("CloudWatchEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH)
+    this.addInterfaceEndpoint("CloudWatchLogsEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS)
+    this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
+    this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
+
     //Outputs
 
     //Exports
@@ -125,5 +140,13 @@ export class VpcResourcesStack extends Stack {
       exportName: `${props.stackName}:PrivateSubnets`
     })
 
+  }
+
+  private addInterfaceEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
+    const endpoint: InterfaceVpcEndpoint = this.vpc.addInterfaceEndpoint(`${name}`, {
+      service: awsService
+    })
+
+    endpoint.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), endpoint.connections.defaultPort!)
   }
 }
