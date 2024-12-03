@@ -1,0 +1,150 @@
+name: cdk release code
+
+on:
+  workflow_call:
+    inputs:
+      TARGET_ENVIRONMENT:
+        required: true
+        type: string
+      VERSION_NUMBER:
+        required: true
+        type: string
+      COMMIT_ID:
+        required: true
+        type: string
+      LOG_RETENTION_IN_DAYS:
+        required: true
+        type: string
+    secrets:
+      CLOUD_FORMATION_DEPLOY_ROLE:
+        required: true
+      CDK_PULL_IMAGE_ROLE:
+        required: true
+jobs:
+  release_code:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.TARGET_ENVIRONMENT }}
+    name: deploy cdk app
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Checkout local github actions
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+          fetch-depth: 0
+          sparse-checkout: |
+            .github
+
+      - name: Configure AWS Credentials
+        id: connect-aws-pull-image
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: ${{ secrets.CDK_PULL_IMAGE_ROLE }}
+          role-session-name: eps-vpc-resources-pull-image
+
+      - name: build_artifact download
+        uses: actions/download-artifact@v4
+        with:
+          name: build_artifact
+
+      - name: extract build_artifact
+        run: |
+          mkdir -p .build
+          tar -xf artifact.tar -C .build
+
+      - name: Retrieve AWS Account ID
+        id: retrieve-account-id
+        run: echo "ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ env.ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
+
+      - name: Pull cdk-utils-build from Amazon ECR
+        run: |
+          docker pull "${{ env.ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/cdk-utils-build-repo:latest"
+          docker tag "${{ env.ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/cdk-utils-build-repo:latest" cdk-utils-build-repo:latest
+
+      - name: Configure AWS Credentials
+        id: connect-aws
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: ${{ secrets.CLOUD_FORMATION_DEPLOY_ROLE }}
+          role-session-name: eps-vpc-resources-deployment
+          output-credentials: true
+  
+      - name: fix cdk.json for deployment
+        run: |
+          jq \
+          --arg VERSION_NUMBER "${{ inputs.VERSION_NUMBER }}" \
+          --arg COMMIT_ID "${{ inputs.COMMIT_ID }}" \
+          --arg logRetentionInDays "${{ inputs.LOG_RETENTION_IN_DAYS }}" \
+          '.context += {
+            "VERSION_NUMBER": $VERSION_NUMBER,
+            "COMMIT_ID": $COMMIT_ID,
+            "logRetentionInDays": $logRetentionInDays}' \
+          .build/cdk.json > .build/cdk.new.json
+          mv .build/cdk.new.json .build/cdk.json
+
+      - name: Show diff
+        run: |
+          docker run \
+          -v "$(pwd)/.build":/home/cdkuser/workspace/ \
+          -e AWS_ACCESS_KEY_ID=${{ steps.connect-aws.outputs.aws-access-key-id }} \
+          -e AWS_SECRET_ACCESS_KEY=${{ steps.connect-aws.outputs.aws-secret-access-key }} \
+          -e AWS_SESSION_TOKEN=${{ steps.connect-aws.outputs.aws-session-token }} \
+          -e AWS_REGION="eu-west-2" \
+          -e SHOW_DIFF="true" \
+          -e DEPLOY_CODE="false" \
+          -e CDK_APP_PATH="packages/cdk/bin/VpcResourcesApp.ts" \
+          cdk-utils-build-repo:latest
+        shell: bash
+
+      - name: Deploy code
+        run: |
+          docker run \
+          -v "$(pwd)/.build":/home/cdkuser/workspace/ \
+          -e AWS_ACCESS_KEY_ID=${{ steps.connect-aws.outputs.aws-access-key-id }} \
+          -e AWS_SECRET_ACCESS_KEY=${{ steps.connect-aws.outputs.aws-secret-access-key }} \
+          -e AWS_SESSION_TOKEN=${{ steps.connect-aws.outputs.aws-session-token }} \
+          -e AWS_REGION="eu-west-2" \
+          -e SHOW_DIFF="false" \
+          -e DEPLOY_CODE="true" \
+          -e CDK_APP_PATH="packages/cdk/bin/VpcResourcesApp.ts" \
+          cdk-utils-build-repo:latest
+        shell: bash
+
+  update_github_pages:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.TARGET_ENVIRONMENT }}
+    if: ${{ always() && !failure() && !cancelled() }}
+    needs: [release_code]
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: update release tag in github pages
+        run: |
+          cd gh-pages
+          NOW=$(date +'%Y-%m-%dT%H:%M:%S')
+          echo "tag,release_datetime" > _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          git add _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
+          git commit -m 'update releases for ${{ inputs.TARGET_ENVIRONMENT }}'
+          parallel --retries 10 --delay 3 ::: "git pull --rebase && git push"
