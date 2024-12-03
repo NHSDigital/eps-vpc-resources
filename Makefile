@@ -62,3 +62,46 @@ aws-login:
 
 cfn-guard:
 	./scripts/run_cfn_guard.sh
+
+cdk-deploy:
+	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
+	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
+	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
+		npx cdk deploy \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
+		--all \
+		--ci true \
+		--require-approval $${REQUIRE_APPROVAL} \
+		--context VERSION_NUMBER=$$VERSION_NUMBER \
+		--context COMMIT_ID=$$COMMIT_ID \
+		--context logRetentionInDays=30
+
+cdk-synth:
+	npx cdk synth \
+		--quiet \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
+		--context VERSION_NUMBER=undefined \
+		--context COMMIT_ID=undefined \
+		--context logRetentionInDays=30
+
+cdk-diff:
+	npx cdk diff \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
+		--context serviceName=$$service_name \
+		--context VERSION_NUMBER=$$VERSION_NUMBER \
+		--context COMMIT_ID=$$COMMIT_ID \
+		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
+
+cdk-watch:
+	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
+	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
+	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
+		npx cdk deploy \
+		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
+		--watch \
+		--all \
+		--ci true \
+		--require-approval $${REQUIRE_APPROVAL} \
+		--context VERSION_NUMBER=$$VERSION_NUMBER \
+		--context COMMIT_ID=$$COMMIT_ID \
+		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
