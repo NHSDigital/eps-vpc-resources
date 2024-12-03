@@ -54,6 +54,7 @@ export class VpcResourcesStack extends Stack {
       ipAddresses: IpAddresses.cidr("10.190.0.0/16"),
       enableDnsSupport: true,
       enableDnsHostnames: true,
+      maxAzs: 3,
       flowLogs: {
         "FlowLogCloudwatch": {
           destination: FlowLogDestination.toCloudWatchLogs(flowLogsLogGroup, flowLogsRole)
