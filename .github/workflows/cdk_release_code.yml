@@ -120,31 +120,31 @@ jobs:
           cdk-utils-build-repo:latest
         shell: bash
 
-  # update_github_pages:
-  #   runs-on: ubuntu-latest
-  #   environment: ${{ inputs.TARGET_ENVIRONMENT }}
-  #   if: ${{ always() && !failure() && !cancelled() }}
-  #   needs: [release_code]
-  #   permissions:
-  #     id-token: write
-  #     contents: write
-  #   steps:
-  #     - name: Checkout gh-pages
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: gh-pages
-  #         path: gh-pages
+  update_github_pages:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.TARGET_ENVIRONMENT }}
+    if: ${{ always() && !failure() && !cancelled() }}
+    needs: [release_code]
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
 
-  #     - name: update release tag in github pages
-  #       run: |
-  #         cd gh-pages
-  #         NOW=$(date +'%Y-%m-%dT%H:%M:%S')
-  #         echo "tag,release_datetime" > _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
-  #         echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
-  #         echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
-  #         git config user.name github-actions
-  #         git config user.email github-actions@github.com
-  #         git add _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
-  #         git add _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
-  #         git commit -m 'update releases for ${{ inputs.TARGET_ENVIRONMENT }}'
-  #         parallel --retries 10 --delay 3 ::: "git pull --rebase && git push"
+      - name: update release tag in github pages
+        run: |
+          cd gh-pages
+          NOW=$(date +'%Y-%m-%dT%H:%M:%S')
+          echo "tag,release_datetime" > _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          echo "${{ inputs.VERSION_NUMBER }},${NOW}" >> _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add _data/${{ inputs.TARGET_ENVIRONMENT }}_latest.csv
+          git add _data/${{ inputs.TARGET_ENVIRONMENT }}_deployments.csv
+          git commit -m 'update releases for ${{ inputs.TARGET_ENVIRONMENT }}'
+          parallel --retries 10 --delay 3 ::: "git pull --rebase && git push"
