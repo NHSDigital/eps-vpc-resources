@@ -19,6 +19,7 @@ import {LogGroup} from "aws-cdk-lib/aws-logs"
 
 export interface VpcResourcesStackProps extends StackProps{
   readonly version: string
+  readonly availabilityZones: [string]
 }
 
 /**
@@ -54,7 +55,7 @@ export class VpcResourcesStack extends Stack {
       ipAddresses: IpAddresses.cidr("10.190.0.0/16"),
       enableDnsSupport: true,
       enableDnsHostnames: true,
-      maxAzs: 3,
+      availabilityZones: props.availabilityZones,
       flowLogs: {
         "FlowLogCloudwatch": {
           destination: FlowLogDestination.toCloudWatchLogs(flowLogsLogGroup, flowLogsRole)
