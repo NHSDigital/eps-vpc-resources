@@ -22,6 +22,8 @@ import {Key} from "aws-cdk-lib/aws-kms"
 import {LogGroup} from "aws-cdk-lib/aws-logs"
 import {AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId} from "aws-cdk-lib/custom-resources"
 
+import {nagSuppressions} from "../nagSuppressions"
+
 export interface VpcResourcesStackProps extends StackProps{
   readonly version: string
   readonly availabilityZones: [string]
@@ -146,6 +148,8 @@ export class VpcResourcesStack extends Stack {
       value: privateSubnetIds.join(","),
       exportName: `${props.stackName}:PrivateSubnets`
     })
+
+    nagSuppressions(this)
 
   }
 
