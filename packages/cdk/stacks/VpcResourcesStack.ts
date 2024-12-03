@@ -20,6 +20,7 @@ import {
 import {Role, ServicePrincipal} from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {LogGroup} from "aws-cdk-lib/aws-logs"
+import {AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId} from "aws-cdk-lib/custom-resources"
 
 export interface VpcResourcesStackProps extends StackProps{
   readonly version: string
@@ -94,7 +95,7 @@ export class VpcResourcesStack extends Stack {
 
     this.vpc = vpc
 
-    // add vpc private endpoints
+    // add vpc private endpoints - needed to set up ECR
     this.addInterfaceEndpoint("ECRDockerEndpoint", InterfaceVpcEndpointAwsService.ECR_DOCKER)
     this.addInterfaceEndpoint("ECREndpoint", InterfaceVpcEndpointAwsService.ECR)
     this.addInterfaceEndpoint("SecretManagerEndpoint", InterfaceVpcEndpointAwsService.SECRETS_MANAGER)
@@ -103,6 +104,7 @@ export class VpcResourcesStack extends Stack {
     this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
     this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
 
+    // add a gateway endpoint for S3
     vpc.addGatewayEndpoint("S3Endpoint", {
       service: GatewayVpcEndpointAwsService.S3
     })
@@ -150,6 +152,29 @@ export class VpcResourcesStack extends Stack {
   private addInterfaceEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
     const endpoint: InterfaceVpcEndpoint = this.vpc.addInterfaceEndpoint(`${name}`, {
       service: awsService
+    })
+
+    new AwsCustomResource(this, `${name}-tags`, {
+      installLatestAwsSdk: false,
+      onUpdate: {
+        action: "createTags",
+        parameters: {
+          Resources: [
+            endpoint.vpcEndpointId
+          ],
+          Tags: [
+            {
+              Key: "Name",
+              Value: `${this.stackName}-${name}-endpoint`
+            }
+          ]
+        },
+        physicalResourceId: PhysicalResourceId.of(Date.now().toString()),
+        service: "EC2"
+      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({
+        resources: AwsCustomResourcePolicy.ANY_RESOURCE
+      })
     })
 
     endpoint.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), endpoint.connections.defaultPort!)
