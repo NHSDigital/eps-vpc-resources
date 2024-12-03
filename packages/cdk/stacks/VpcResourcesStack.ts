@@ -10,6 +10,7 @@ import {
 import {
   CfnSubnet,
   FlowLogDestination,
+  InterfaceVpcEndpointAwsService,
   IpAddresses,
   Vpc
 } from "aws-cdk-lib/aws-ec2"
@@ -86,6 +87,15 @@ export class VpcResourcesStack extends Stack {
         }
       }
     }
+
+    // add vpc private endpoints
+    vpc.addInterfaceEndpoint("ECRDockerEndpoint", {service: InterfaceVpcEndpointAwsService.ECR_DOCKER})
+    vpc.addInterfaceEndpoint("ECREndpoint", {service: InterfaceVpcEndpointAwsService.ECR})
+    vpc.addInterfaceEndpoint("SecretManagerEndpoint", {service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER})
+    vpc.addInterfaceEndpoint("CloudWatchEndpoint", {service: InterfaceVpcEndpointAwsService.CLOUDWATCH})
+    vpc.addInterfaceEndpoint("CloudWatchLogsEndpoint", {service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS})
+    vpc.addInterfaceEndpoint("CloudWatchEventsEndpoint", {service: InterfaceVpcEndpointAwsService.EVENTBRIDGE})
+    vpc.addInterfaceEndpoint("SSMEndpoint", {service: InterfaceVpcEndpointAwsService.SSM})
 
     //Outputs
 
