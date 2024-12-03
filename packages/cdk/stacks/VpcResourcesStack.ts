@@ -128,7 +128,7 @@ export class VpcResourcesStack extends Stack {
     }
 
     let privateSubnetIds = []
-    for (const [i, subnet] of vpc.publicSubnets.entries()){
+    for (const [i, subnet] of vpc.privateSubnets.entries()){
       const subnetIdentifier = String.fromCharCode("A".charCodeAt(0) + i)
       new CfnOutput(this, `PrivateSubnet${subnetIdentifier}`, {
         value: subnet.subnetId,
