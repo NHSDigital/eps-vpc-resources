@@ -14,6 +14,7 @@ import {
   InterfaceVpcEndpoint,
   InterfaceVpcEndpointAwsService,
   IpAddresses,
+  IVpcEndpoint,
   Peer,
   Vpc
 } from "aws-cdk-lib/aws-ec2"
@@ -154,31 +155,7 @@ export class VpcResourcesStack extends Stack {
     const endpoint: InterfaceVpcEndpoint = this.vpc.addInterfaceEndpoint(name, {
       service: awsService
     })
-
-    // vpc endpoints do not support tagging from cdk/cloudformation
-    // so use a custom resource to add them in
-    new AwsCustomResource(this, `${name}-tags`, {
-      installLatestAwsSdk: false,
-      onUpdate: {
-        action: "createTags",
-        parameters: {
-          Resources: [
-            endpoint.vpcEndpointId
-          ],
-          Tags: [
-            {
-              Key: "Name",
-              Value: `${this.stackName}-${name}`
-            }
-          ]
-        },
-        physicalResourceId: PhysicalResourceId.of(Date.now().toString()),
-        service: "EC2"
-      },
-      policy: AwsCustomResourcePolicy.fromSdkCalls({
-        resources: AwsCustomResourcePolicy.ANY_RESOURCE
-      })
-    })
+    this.addEndpointTag(name, endpoint)
 
     endpoint.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), endpoint.connections.defaultPort!)
   }
@@ -187,7 +164,10 @@ export class VpcResourcesStack extends Stack {
     const endpoint: GatewayVpcEndpoint = this.vpc.addGatewayEndpoint(name, {
       service: awsService
     })
+    this.addEndpointTag(name, endpoint)
+  }
 
+  private addEndpointTag(name: string, endpoint: IVpcEndpoint) {
     // vpc endpoints do not support tagging from cdk/cloudformation
     // so use a custom resource to add them in
     new AwsCustomResource(this, `${name}-tags`, {
@@ -212,6 +192,7 @@ export class VpcResourcesStack extends Stack {
         resources: AwsCustomResourcePolicy.ANY_RESOURCE
       })
     })
+
   }
 
 }
