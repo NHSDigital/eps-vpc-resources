@@ -10,12 +10,20 @@ import {
 import {
   CfnSubnet,
   FlowLogDestination,
+  GatewayVpcEndpoint,
+  InterfaceVpcEndpoint,
+  InterfaceVpcEndpointAwsService,
   IpAddresses,
+  IVpcEndpoint,
+  Peer,
   Vpc
 } from "aws-cdk-lib/aws-ec2"
 import {Role, ServicePrincipal} from "aws-cdk-lib/aws-iam"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {LogGroup} from "aws-cdk-lib/aws-logs"
+import {AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId} from "aws-cdk-lib/custom-resources"
+
+import {nagSuppressions} from "../nagSuppressions"
 
 export interface VpcResourcesStackProps extends StackProps{
   readonly version: string
@@ -28,6 +36,7 @@ export interface VpcResourcesStackProps extends StackProps{
  */
 
 export class VpcResourcesStack extends Stack {
+  readonly vpc : Vpc
   public constructor(scope: App, id: string, props: VpcResourcesStackProps){
     super(scope, id, props)
 
@@ -87,6 +96,19 @@ export class VpcResourcesStack extends Stack {
       }
     }
 
+    this.vpc = vpc
+
+    // add vpc private endpoints - needed to run ECS in private subnet
+    // copied from https://stackoverflow.com/a/69578964/9294145
+    this.addInterfaceEndpoint("ECRDockerEndpoint", InterfaceVpcEndpointAwsService.ECR_DOCKER)
+    this.addInterfaceEndpoint("ECREndpoint", InterfaceVpcEndpointAwsService.ECR)
+    this.addInterfaceEndpoint("SecretManagerEndpoint", InterfaceVpcEndpointAwsService.SECRETS_MANAGER)
+    this.addInterfaceEndpoint("CloudWatchEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH_MONITORING)
+    this.addInterfaceEndpoint("CloudWatchLogsEndpoint", InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS)
+    this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
+    this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
+    this.addGatewayEndpoint("S3Endpoint", InterfaceVpcEndpointAwsService.S3)
+
     //Outputs
 
     //Exports
@@ -106,7 +128,7 @@ export class VpcResourcesStack extends Stack {
     }
 
     let privateSubnetIds = []
-    for (const [i, subnet] of vpc.publicSubnets.entries()){
+    for (const [i, subnet] of vpc.privateSubnets.entries()){
       const subnetIdentifier = String.fromCharCode("A".charCodeAt(0) + i)
       new CfnOutput(this, `PrivateSubnet${subnetIdentifier}`, {
         value: subnet.subnetId,
@@ -125,5 +147,52 @@ export class VpcResourcesStack extends Stack {
       exportName: `${props.stackName}:PrivateSubnets`
     })
 
+    nagSuppressions(this)
+
   }
+
+  private addInterfaceEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
+    const endpoint: InterfaceVpcEndpoint = this.vpc.addInterfaceEndpoint(name, {
+      service: awsService
+    })
+    this.addEndpointTag(name, endpoint)
+
+    endpoint.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), endpoint.connections.defaultPort!)
+  }
+
+  private addGatewayEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
+    const endpoint: GatewayVpcEndpoint = this.vpc.addGatewayEndpoint(name, {
+      service: awsService
+    })
+    this.addEndpointTag(name, endpoint)
+  }
+
+  private addEndpointTag(name: string, endpoint: IVpcEndpoint) {
+    // vpc endpoints do not support tagging from cdk/cloudformation
+    // so use a custom resource to add them in
+    new AwsCustomResource(this, `${name}-tags`, {
+      installLatestAwsSdk: false,
+      onUpdate: {
+        action: "createTags",
+        parameters: {
+          Resources: [
+            endpoint.vpcEndpointId
+          ],
+          Tags: [
+            {
+              Key: "Name",
+              Value: `${this.stackName}-${name}`
+            }
+          ]
+        },
+        physicalResourceId: PhysicalResourceId.of(Date.now().toString()),
+        service: "EC2"
+      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({
+        resources: AwsCustomResourcePolicy.ANY_RESOURCE
+      })
+    })
+
+  }
+
 }
