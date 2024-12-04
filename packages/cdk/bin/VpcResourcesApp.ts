@@ -35,6 +35,7 @@ const VpcResources = new VpcResourcesStack(app, "VpcResourcesStack", {
 app.synth()
 
 addCfnGuardMetadata(VpcResources, "Custom::VpcRestrictDefaultSGCustomResourceProvider", "Handler")
+addCfnGuardMetadata(VpcResources, "AWS679f53fac002430cb0da5b7982bd2287", "Resource")
 
 // finally run synth again with force to include the added metadata
 app.synth({
