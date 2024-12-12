@@ -15,4 +15,4 @@ console\.log\(`access token : \${access_token}`\)
 .*nhsd-rules-deny.txt.*
 .*\.venv.*
 .*node_modules.*
-ipAddresses: IpAddresses.cidr("10\.190\.0\.0\/16")
+ipAddresses: IpAddresses\.cidr("10\.190\.0\.0\/16")
