@@ -113,6 +113,17 @@ export const nagSuppressions = (stack: Stack) => {
     ]
   )
 
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/LambdaEndpoint-tags/CustomResourcePolicy/Resource",
+    [
+      {
+        id: "AwsSolutions-IAM5",
+        reason: "Suppress error for wildcard permissions. This is fine here"
+      }
+    ]
+  )
+
 }
 
 const safeAddNagSuppression = (stack: Stack, path: string, suppressions: Array<NagPackSuppression>) => {
