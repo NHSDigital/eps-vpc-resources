@@ -108,6 +108,7 @@ export class VpcResourcesStack extends Stack {
     this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
     this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
     this.addInterfaceEndpoint("LambdaEndpoint", InterfaceVpcEndpointAwsService.LAMBDA)
+    this.addInterfaceEndpoint("apiGatewayEndpoint", InterfaceVpcEndpointAwsService.APIGATEWAY)
     this.addGatewayEndpoint("S3Endpoint", InterfaceVpcEndpointAwsService.S3)
 
     //Outputs
