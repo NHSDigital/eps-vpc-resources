@@ -170,6 +170,12 @@ export class VpcResourcesStack extends Stack {
 
     endpoint.connections.allowFrom(Peer.ipv4(this.vpc.privateSubnets[0].ipv4CidrBlock),
     endpoint.connections.defaultPort!)
+
+    new CfnOutput(this, `PrivateInterfaceEndpoint-${name}`, {
+      value: endpoint.vpcEndpointId,
+      description: "Private interface endpoints for the VPC",
+      exportName: `${this.stackName}:PrivateInterfaceEndpoint-${name}`
+    })
   }
 
   private addGatewayEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
