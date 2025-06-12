@@ -108,7 +108,7 @@ export class VpcResourcesStack extends Stack {
     this.addInterfaceEndpoint("CloudWatchEventsEndpoint", InterfaceVpcEndpointAwsService.EVENTBRIDGE)
     this.addInterfaceEndpoint("SSMEndpoint", InterfaceVpcEndpointAwsService.SSM)
     this.addInterfaceEndpoint("LambdaEndpoint", InterfaceVpcEndpointAwsService.LAMBDA)
-    this.addInterfaceEndpoint("apiGatewayEndpoint", InterfaceVpcEndpointAwsService.APIGATEWAY)
+    this.addPrivateInterfaceEndpoint("apiGatewayEndpoint", InterfaceVpcEndpointAwsService.APIGATEWAY)
     this.addGatewayEndpoint("S3Endpoint", InterfaceVpcEndpointAwsService.S3)
 
     //Outputs
@@ -160,6 +160,16 @@ export class VpcResourcesStack extends Stack {
     this.addEndpointTag(name, endpoint)
 
     endpoint.connections.allowFrom(Peer.ipv4(this.vpc.vpcCidrBlock), endpoint.connections.defaultPort!)
+  }
+
+  private addPrivateInterfaceEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
+    const endpoint: InterfaceVpcEndpoint = this.vpc.addInterfaceEndpoint(name, {
+      service: awsService
+    })
+    this.addEndpointTag(name, endpoint)
+
+    endpoint.connections.allowFrom(Peer.ipv4(this.vpc.privateSubnets[0].ipv4CidrBlock),
+    endpoint.connections.defaultPort!)
   }
 
   private addGatewayEndpoint(name: string, awsService: InterfaceVpcEndpointAwsService): void {
