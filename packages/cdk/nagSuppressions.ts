@@ -135,6 +135,113 @@ export const nagSuppressions = (stack: Stack) => {
     ]
   )
 
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/ECRDockerEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/ECREndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/SecretManagerEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/CloudWatchEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/CloudWatchLogsEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/CloudWatchEventsEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/SSMEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/LambdaEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
+
+  safeAddNagSuppression(
+    stack,
+    "/VpcResourcesStack/vpc/apiGatewayEndpoint/SecurityGroup/Resource",
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for lack of CDK validation of supplied open CIDR being that of VPC. This is fine here. \
+        See https://github.com/cdklabs/cdk-nag/issues/817"
+      }
+    ]
+  )
 }
 
 const safeAddNagSuppression = (stack: Stack, path: string, suppressions: Array<NagPackSuppression>) => {
