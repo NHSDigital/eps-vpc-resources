@@ -1,11 +1,5 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
-ARG TARGETARCH
-ENV TARGETARCH=${TARGETARCH}
-
-# Add amd64 architecture if on arm64
-RUN if [ "$TARGETARCH" == "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then dpkg --add-architecture amd64; fi
-
 RUN apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y dist-upgrade \
@@ -15,17 +9,14 @@ RUN apt-get update \
     jq apt-transport-https ca-certificates gnupg-agent \
     software-properties-common bash-completion python3-pip make libbz2-dev \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev
+    xz-utils tk-dev liblzma-dev netcat libyaml-dev
 
-# Download correct AWS CLI for arch
-RUN if [ "$TARGETARCH" = "arm64" ] || [ "$TARGETARCH" == "aarch64" ]; then \
-      wget -O /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"; \
-    else \
-      wget -O /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"; \
-    fi && \
+# install aws stuff
+RUN wget -O /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" && \
     unzip /tmp/awscliv2.zip -d /tmp/aws-cli && \
     /tmp/aws-cli/aws/install && \
-    rm /tmp/awscliv2.zip && rm -rf /tmp/aws-cli
+    rm tmp/awscliv2.zip && \
+    rm -rf /tmp/aws-cli
 
 USER vscode
 
