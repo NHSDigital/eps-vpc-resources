@@ -57,11 +57,17 @@
         "editor.formatOnSave": true, // optional
         "editor.formatOnSaveMode": "file",
         "cSpell.words": ["fhir", "Formik", "pino", "serialisation"],
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "[typescript]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "always"
+        }
       }
     }
   },
+  "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}" },
   "postCreateCommand": "rm -f ~/.docker/config.json; git config --global --add safe.directory /workspaces/eps-vpc-resources; make install; direnv allow ."
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
