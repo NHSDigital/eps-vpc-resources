@@ -42,7 +42,7 @@ fi
 
 # go through all the key values we need to set
 fix_string_key accountId "${ACCOUNT_ID}"
-fix_string_key stackName "${STACK_NAME}"
+fix_string_key stackName "vpc-resources"
 fix_string_key versionNumber "${VERSION_NUMBER}"
 fix_string_key commitId "${COMMIT_ID}"
 fix_string_key cfnDriftDetectionGroup "${CFN_DRIFT_DETECTION_GROUP}"
