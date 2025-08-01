@@ -9,8 +9,12 @@ const app = new App()
   - logRetentionInDays
 */
 
-const version = app.node.tryGetContext("VERSION_NUMBER")
-const commit = app.node.tryGetContext("COMMIT_ID")
+const accountId = app.node.tryGetContext("accountId")
+const stackName = app.node.tryGetContext("stackName")
+const version = app.node.tryGetContext("versionNumber")
+const commit = app.node.tryGetContext("commitId")
+const cfnDriftDetectionGroup = app.node.tryGetContext("cfnDriftDetectionGroup")
+
 /* when getAz's is called behind the scenes it only returns the first 2 when the stack is account/region agnostic.
   Allow AZ's to be passed as context otherwise explicitly use the 3 in eu-west-2. */
 const availabilityZones = app.node.tryGetContext("AVAILABILITY_ZONES") || ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
@@ -18,9 +22,13 @@ const availabilityZones = app.node.tryGetContext("AVAILABILITY_ZONES") || ["eu-w
 // add cdk-nag to everything
 Aspects.of(app).add(new AwsSolutionsChecks({verbose: true}))
 
+Tags.of(app).add("accountId", accountId)
+Tags.of(app).add("stackName", stackName)
 Tags.of(app).add("version", version)
 Tags.of(app).add("commit", commit)
 Tags.of(app).add("cdkApp", "VpcResourcesApp")
+Tags.of(app).add("repo", "eps-vpc-resources")
+Tags.of(app).add("cfnDriftDetectionGroup", cfnDriftDetectionGroup)
 
 const VpcResources = new VpcResourcesStack(app, "VpcResourcesStack", {
   env: {

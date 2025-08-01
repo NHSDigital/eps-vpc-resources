@@ -81,19 +81,14 @@ jobs:
           role-to-assume: ${{ secrets.CLOUD_FORMATION_DEPLOY_ROLE }}
           role-session-name: eps-vpc-resources-deployment
           output-credentials: true
-  
+
       - name: fix cdk.json for deployment
         run: |
-          jq \
-          --arg VERSION_NUMBER "${{ inputs.VERSION_NUMBER }}" \
-          --arg COMMIT_ID "${{ inputs.COMMIT_ID }}" \
-          --arg logRetentionInDays "${{ inputs.LOG_RETENTION_IN_DAYS }}" \
-          '.context += {
-            "VERSION_NUMBER": $VERSION_NUMBER,
-            "COMMIT_ID": $COMMIT_ID,
-            "logRetentionInDays": $logRetentionInDays}' \
-          .build/cdk.json > .build/cdk.new.json
-          mv .build/cdk.new.json .build/cdk.json
+          ./.github/scripts/fix_cdk_json.sh
+        env:
+          VERSION_NUMBER: "${{ inputs.VERSION_NUMBER }}"
+          COMMIT_ID: "${{ inputs.COMMIT_ID }}"
+          LOG_RETENTION_IN_DAYS: "${{ inputs.LOG_RETENTION_IN_DAYS }}"
 
       - name: Show diff
         run: |

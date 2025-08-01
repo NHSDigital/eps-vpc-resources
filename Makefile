@@ -72,25 +72,31 @@ cdk-deploy:
 		--all \
 		--ci true \
 		--require-approval $${REQUIRE_APPROVAL} \
+		--context accountId=$$ACCOUNT_ID \
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID \
+		--context stackName=$$stack_name \
 		--context logRetentionInDays=30
 
 cdk-synth:
 	npx cdk synth \
 		--quiet \
 		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
-		--context VERSION_NUMBER=undefined \
-		--context COMMIT_ID=undefined \
-		--context logRetentionInDays=30
-
+		--context accountId=undefined \
+		--context commitId=undefined \
+		--context logRetentionInDays=30 \
+		--context stackName=vpc-resources \
+		--context versionNumber=undefined \
+		--context commitId=undefined
 cdk-diff:
 	npx cdk diff \
 		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
 		--context serviceName=$$service_name \
+		--context accountId=$$ACCOUNT_ID \
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID \
-		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
+		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS \
+		--context stackName=$$stack_name
 
 cdk-watch:
 	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
@@ -102,6 +108,8 @@ cdk-watch:
 		--all \
 		--ci true \
 		--require-approval $${REQUIRE_APPROVAL} \
+		--context accountId=$$ACCOUNT_ID \
+		--context stackName=$$stack_name \
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID \
 		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
