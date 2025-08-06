@@ -50,7 +50,7 @@ jobs:
           role-session-name: eps-vpc-resources-pull-image
 
       - name: build_artifact download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build_artifact
 
