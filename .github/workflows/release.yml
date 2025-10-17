@@ -39,7 +39,7 @@ jobs:
         uses: asdf-vm/actions/setup@1902764435ca0dd2f3388eea723a4f92a4eb8302
         with:
           asdf_branch: v0.14.1
-  
+
       - name: Cache asdf
         uses: actions/cache@v4
         with:
@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           make install
-  
+
       - name: Set VERSION_TAG to be next tag varsion
         id: output_version_tag
         run: |
@@ -122,10 +122,11 @@ jobs:
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
       LOG_RETENTION_IN_DAYS: 30
       DEPLOY_CHANGE: true
+      FORWARD_CSOC_LOGS: false
     secrets:
       CDK_PULL_IMAGE_ROLE: ${{ secrets.DEV_CDK_PULL_IMAGE_ROLE }}
       CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
-  
+
   create_release_notes:
     needs: [tag_release, package_code, get_commit_id, release_dev]
     uses: ./.github/workflows/create_release_notes.yml
@@ -150,6 +151,7 @@ jobs:
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
       LOG_RETENTION_IN_DAYS: 30
       DEPLOY_CHANGE: true
+      FORWARD_CSOC_LOGS: false
     secrets:
       CDK_PULL_IMAGE_ROLE: ${{ secrets.REF_CDK_PULL_IMAGE_ROLE }}
       CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.REF_CLOUD_FORMATION_DEPLOY_ROLE }}
@@ -163,6 +165,7 @@ jobs:
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
       LOG_RETENTION_IN_DAYS: 30
       DEPLOY_CHANGE: true
+      FORWARD_CSOC_LOGS: false
     secrets:
       CDK_PULL_IMAGE_ROLE: ${{ secrets.QA_CDK_PULL_IMAGE_ROLE }}
       CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
@@ -183,7 +186,14 @@ jobs:
       PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_CHECK_VERSION_ROLE }}
 
   release_int:
-    needs: [tag_release, package_code, get_commit_id, release_qa, create_rc_release_notes]
+    needs:
+      [
+        tag_release,
+        package_code,
+        get_commit_id,
+        release_qa,
+        create_rc_release_notes,
+      ]
     uses: ./.github/workflows/cdk_release_code.yml
     with:
       TARGET_ENVIRONMENT: int
@@ -191,12 +201,21 @@ jobs:
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
       LOG_RETENTION_IN_DAYS: 30
       DEPLOY_CHANGE: true
+      FORWARD_CSOC_LOGS: false
     secrets:
       CDK_PULL_IMAGE_ROLE: ${{ secrets.INT_CDK_PULL_IMAGE_ROLE }}
       CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.INT_CLOUD_FORMATION_DEPLOY_ROLE }}
 
   create_release_notes_post_int:
-    needs: [tag_release, package_code, get_commit_id, release_dev, release_qa, release_int]
+    needs:
+      [
+        tag_release,
+        package_code,
+        get_commit_id,
+        release_dev,
+        release_qa,
+        release_int,
+      ]
     uses: ./.github/workflows/create_release_notes.yml
     with:
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
@@ -219,12 +238,22 @@ jobs:
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
       LOG_RETENTION_IN_DAYS: 30
       DEPLOY_CHANGE: true
+      FORWARD_CSOC_LOGS: true
     secrets:
       CDK_PULL_IMAGE_ROLE: ${{ secrets.PROD_CDK_PULL_IMAGE_ROLE }}
       CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_DEPLOY_ROLE }}
 
   create_release_notes_post_prod:
-    needs: [tag_release, package_code, get_commit_id, release_dev, release_qa, release_int, release_prod]
+    needs:
+      [
+        tag_release,
+        package_code,
+        get_commit_id,
+        release_dev,
+        release_qa,
+        release_int,
+        release_prod,
+      ]
     uses: ./.github/workflows/create_release_notes.yml
     with:
       VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
