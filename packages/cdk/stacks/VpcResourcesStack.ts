@@ -47,7 +47,7 @@ export class VpcResourcesStack extends Stack {
     // Context
     /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/
     const logRetentionInDays: number = Number(this.node.tryGetContext("logRetentionInDays"))
-    const forwardCsocLogs: boolean = this.node.tryGetContext("forwardCsocLogs") === "true"
+    const forwardCsocLogs: boolean = this.node.tryGetContext("forwardCsocLogs")
 
     // Imports
     const cloudwatchKmsKey = Key.fromKeyArn(
