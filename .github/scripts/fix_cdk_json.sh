@@ -48,5 +48,3 @@ fix_string_key commitId "${COMMIT_ID}"
 fix_string_key cfnDriftDetectionGroup "${CFN_DRIFT_DETECTION_GROUP}"
 fix_boolean_number_key logRetentionInDays "${LOG_RETENTION_IN_DAYS}"
 fix_boolean_number_key forwardCsocLogs "${FORWARD_CSOC_LOGS}"
-
-cat .build/cdk.json

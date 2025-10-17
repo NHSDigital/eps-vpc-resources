@@ -47,7 +47,7 @@ export class VpcResourcesStack extends Stack {
     // Context
     /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/
     const logRetentionInDays: number = Number(this.node.tryGetContext("logRetentionInDays"))
-    //const forwardCsocLogs: boolean = Boolean(this.node.tryGetContext("forwardCsocLogs"))
+    const forwardCsocLogs: boolean = Boolean(this.node.tryGetContext("forwardCsocLogs"))
 
     // Imports
     const cloudwatchKmsKey = Key.fromKeyArn(
@@ -73,19 +73,19 @@ export class VpcResourcesStack extends Stack {
     }
 
     // Conditionally add S3 flow logs if forwardCsocLogs is true
-    //if (forwardCsocLogs) {
-    const vpcFlowLogsBucket = Bucket.fromBucketArn(
-      this,
-      "VpcFlowLogsBucket",
-      "arn:aws:s3:::nhsd-audit-vpcflowlogs"
-    )
+    if (forwardCsocLogs) {
+      const vpcFlowLogsBucket = Bucket.fromBucketArn(
+        this,
+        "VpcFlowLogsBucket",
+        "arn:aws:s3:::nhsd-audit-vpcflowlogs"
+      )
 
-    flowLogsConfig["FlowLogS3"] = {
-      destination: FlowLogDestination.toS3(vpcFlowLogsBucket),
-      trafficType: FlowLogTrafficType.ALL,
-      maxAggregationInterval: FlowLogMaxAggregationInterval.TEN_MINUTES
+      flowLogsConfig["FlowLogS3"] = {
+        destination: FlowLogDestination.toS3(vpcFlowLogsBucket),
+        trafficType: FlowLogTrafficType.ALL,
+        maxAggregationInterval: FlowLogMaxAggregationInterval.TEN_MINUTES
+      }
     }
-    //}
 
     const vpc = new Vpc(this, "vpc", {
       ipAddresses: IpAddresses.cidr("10.190.0.0/16"),
