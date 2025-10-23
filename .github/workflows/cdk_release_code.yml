@@ -18,6 +18,9 @@ on:
       DEPLOY_CHANGE:
         type: boolean
         default: true
+      FORWARD_CSOC_LOGS:
+        type: boolean
+        default: false
     secrets:
       CLOUD_FORMATION_DEPLOY_ROLE:
         required: true
@@ -89,6 +92,7 @@ jobs:
           VERSION_NUMBER: "${{ inputs.VERSION_NUMBER }}"
           COMMIT_ID: "${{ inputs.COMMIT_ID }}"
           LOG_RETENTION_IN_DAYS: "${{ inputs.LOG_RETENTION_IN_DAYS }}"
+          FORWARD_CSOC_LOGS: "${{ inputs.FORWARD_CSOC_LOGS }}"
 
       - name: Show diff
         run: |

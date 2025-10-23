@@ -10,6 +10,9 @@ import {
 import {
   CfnSubnet,
   FlowLogDestination,
+  FlowLogMaxAggregationInterval,
+  FlowLogOptions,
+  FlowLogTrafficType,
   GatewayVpcEndpoint,
   InterfaceVpcEndpoint,
   InterfaceVpcEndpointAwsService,
@@ -19,6 +22,7 @@ import {
   Vpc
 } from "aws-cdk-lib/aws-ec2"
 import {Role, ServicePrincipal} from "aws-cdk-lib/aws-iam"
+import {Bucket} from "aws-cdk-lib/aws-s3"
 import {Key} from "aws-cdk-lib/aws-kms"
 import {LogGroup} from "aws-cdk-lib/aws-logs"
 import {AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId} from "aws-cdk-lib/custom-resources"
@@ -43,6 +47,7 @@ export class VpcResourcesStack extends Stack {
     // Context
     /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/
     const logRetentionInDays: number = Number(this.node.tryGetContext("logRetentionInDays"))
+    const forwardCsocLogs: boolean = Boolean(this.node.tryGetContext("forwardCsocLogs"))
 
     // Imports
     const cloudwatchKmsKey = Key.fromKeyArn(
@@ -60,16 +65,34 @@ export class VpcResourcesStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY
     })
 
+    // Build flow logs configuration
+    const flowLogsConfig: Record<string, FlowLogOptions> = {
+      "FlowLogCloudwatch": {
+        destination: FlowLogDestination.toCloudWatchLogs(flowLogsLogGroup, flowLogsRole)
+      }
+    }
+
+    // Conditionally add S3 flow logs if forwardCsocLogs is true
+    if (forwardCsocLogs) {
+      const vpcFlowLogsBucket = Bucket.fromBucketArn(
+        this,
+        "VpcFlowLogsBucket",
+        "arn:aws:s3:::nhsd-audit-vpcflowlogs"
+      )
+
+      flowLogsConfig["FlowLogS3"] = {
+        destination: FlowLogDestination.toS3(vpcFlowLogsBucket),
+        trafficType: FlowLogTrafficType.ALL,
+        maxAggregationInterval: FlowLogMaxAggregationInterval.TEN_MINUTES
+      }
+    }
+
     const vpc = new Vpc(this, "vpc", {
       ipAddresses: IpAddresses.cidr("10.190.0.0/16"),
       enableDnsSupport: true,
       enableDnsHostnames: true,
       availabilityZones: props.availabilityZones,
-      flowLogs: {
-        "FlowLogCloudwatch": {
-          destination: FlowLogDestination.toCloudWatchLogs(flowLogsLogGroup, flowLogsRole)
-        }
-      }
+      flowLogs: flowLogsConfig
     })
 
     // Add cfn-guard suppressions
