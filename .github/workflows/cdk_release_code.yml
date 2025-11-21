@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           ref: ${{ env.BRANCH_NAME }}
           fetch-depth: 0
