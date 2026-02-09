@@ -1,0 +1,13 @@
+name: deploy to environments
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"   # weekly
+  workflow_dispatch:
+
+jobs:
+  sync_copilot:
+    uses: NHSDigital/eps-common-workflows/.github/workflows/sync_copilot.yml@copilot
+    permissions:
+      contents: write
+      pull-requests: write
