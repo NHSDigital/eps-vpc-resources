@@ -5,7 +5,7 @@ on:
 
 jobs:
   sync_copilot:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/sync-copilot.yml@copilot
+    uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@copilot
     permissions:
       contents: write
       pull-requests: write
