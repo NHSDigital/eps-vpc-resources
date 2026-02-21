@@ -1,10 +1,4 @@
-guard-%:
-	@ if [ "${${*}}" = "" ]; then \
-		echo "Environment variable $* not set"; \
-		exit 1; \
-	fi
-
-.PHONY: install build test publish release clean
+.PHONY: install build test publish release clean lint
 
 install: install-node install-python install-hooks
 
@@ -25,13 +19,8 @@ compile: compile-node
 lint-node: compile-node
 	npm run lint --workspace packages/cdk
 
-lint-githubactions:
-	actionlint
 
-lint-githubaction-scripts:
-	shellcheck .github/scripts/*.sh
-
-lint: lint-node lint-githubactions lint-githubaction-scripts
+lint: lint-node
 
 test: compile
 	npm run test --workspace packages/cdk
@@ -45,23 +34,6 @@ deep-clean: clean
 	rm -rf .venv
 	find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +
 
-check-licenses: check-licenses-node check-licenses-python
-
-check-licenses-node:
-	npm run check-licenses
-	npm run check-licenses --workspace packages/cdk
-
-check-licenses-python:
-	scripts/check_python_licenses.sh
-
-aws-configure:
-	aws configure sso --region eu-west-2
-
-aws-login:
-	aws sso login --sso-session sso-session
-
-cfn-guard:
-	./scripts/run_cfn_guard.sh
 
 cdk-deploy:
 	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
@@ -113,3 +85,6 @@ cdk-watch:
 		--context VERSION_NUMBER=$$VERSION_NUMBER \
 		--context COMMIT_ID=$$COMMIT_ID \
 		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
+
+%:
+	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
