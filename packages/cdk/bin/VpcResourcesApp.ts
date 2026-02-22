@@ -9,7 +9,6 @@ const app = new App()
   - logRetentionInDays
 */
 
-const accountId = app.node.tryGetContext("accountId")
 const stackName = app.node.tryGetContext("stackName")
 const version = app.node.tryGetContext("versionNumber")
 const commit = app.node.tryGetContext("commitId")
@@ -22,7 +21,6 @@ const availabilityZones = app.node.tryGetContext("AVAILABILITY_ZONES") || ["eu-w
 // add cdk-nag to everything
 Aspects.of(app).add(new AwsSolutionsChecks({verbose: true}))
 
-Tags.of(app).add("accountId", accountId)
 Tags.of(app).add("stackName", stackName)
 Tags.of(app).add("version", version)
 Tags.of(app).add("commit", commit)
