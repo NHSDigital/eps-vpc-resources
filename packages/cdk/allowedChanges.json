@@ -1,1 +1,52 @@
-[]
+[
+    {
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-JswGgyraYlpN",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
+        "ExpiryDate": "2026-04-01T23:59:59Z",
+        "StackName": "vpc-resources",
+        "AllowedReason": "dev account - removing unused policy"
+    },
+    {
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-f7kB6kcRvHNS",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
+        "ExpiryDate": "2026-04-01T23:59:59Z",
+        "StackName": "vpc-resources",
+        "AllowedReason": "qa account - removing unused policy"
+    },
+    {
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-D3Wcxuc93JeS",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
+        "ExpiryDate": "2026-04-01T23:59:59Z",
+        "StackName": "vpc-resources",
+        "AllowedReason": "ref account - removing unused policy"
+    },
+    {
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-rBYRcw4F2RrJ",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
+        "ExpiryDate": "2026-04-01T23:59:59Z",
+        "StackName": "vpc-resources",
+        "AllowedReason": "int account - removing unused policy"
+    },
+    {
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-fq9blAEwykRl",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
+        "ExpiryDate": "2026-04-01T23:59:59Z",
+        "StackName": "vpc-resources",
+        "AllowedReason": "prod account - removing unused policy"
+    }
+]
