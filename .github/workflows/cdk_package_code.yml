@@ -64,8 +64,7 @@ jobs:
             package-lock.json \
             tsconfig.defaults.json \
             Makefile \
-            .github \
-            cdk.json
+            .github
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         name: upload build artifact
