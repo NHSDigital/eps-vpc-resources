@@ -1,10 +1,4 @@
-guard-%:
-	@ if [ "${${*}}" = "" ]; then \
-		echo "Environment variable $* not set"; \
-		exit 1; \
-	fi
-
-.PHONY: install build test publish release clean
+.PHONY: install build test publish release clean lint compile
 
 install: install-node install-python install-hooks
 
@@ -25,16 +19,11 @@ compile: compile-node
 lint-node: compile-node
 	npm run lint --workspace packages/cdk
 
-lint-githubactions:
-	actionlint
 
-lint-githubaction-scripts:
-	shellcheck .github/scripts/*.sh
+lint: lint-node
 
-lint: lint-node lint-githubactions lint-githubaction-scripts
-
-test: compile
-	npm run test --workspace packages/cdk
+test:
+	@$(MAKE) compile
 
 clean:
 	rm -rf packages/cdk/coverage
@@ -45,71 +34,16 @@ deep-clean: clean
 	rm -rf .venv
 	find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +
 
-check-licenses: check-licenses-node check-licenses-python
-
-check-licenses-node:
-	npm run check-licenses
-	npm run check-licenses --workspace packages/cdk
-
-check-licenses-python:
-	scripts/check_python_licenses.sh
-
-aws-configure:
-	aws configure sso --region eu-west-2
-
-aws-login:
-	aws sso login --sso-session sso-session
-
-cfn-guard:
-	./scripts/run_cfn_guard.sh
-
-cdk-deploy:
-	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
-	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
-	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
-		npx cdk deploy \
-		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
-		--all \
-		--ci true \
-		--require-approval $${REQUIRE_APPROVAL} \
-		--context accountId=$$ACCOUNT_ID \
-		--context VERSION_NUMBER=$$VERSION_NUMBER \
-		--context COMMIT_ID=$$COMMIT_ID \
-		--context stackName=$$stack_name \
-		--context logRetentionInDays=30
 
 cdk-synth:
-	npx cdk synth \
-		--quiet \
-		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
-		--context accountId=undefined \
-		--context commitId=undefined \
-		--context logRetentionInDays=30 \
-		--context stackName=vpc-resources \
-		--context versionNumber=undefined \
-		--context commitId=undefined
-cdk-diff:
-	npx cdk diff \
-		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
-		--context serviceName=$$service_name \
-		--context accountId=$$ACCOUNT_ID \
-		--context VERSION_NUMBER=$$VERSION_NUMBER \
-		--context COMMIT_ID=$$COMMIT_ID \
-		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS \
-		--context stackName=$$stack_name
+	CDK_APP_NAME=VpcResourcesApp \
+	CDK_CONFIG_versionNumber=undefined \
+	CDK_CONFIG_commitId=undefined \
+	CDK_CONFIG_isPullRequest=false \
+	CDK_CONFIG_environment=dev \
+	CDK_CONFIG_LOG_RETENTION_IN_DAYS=30 \
+	CDK_CONFIG_FORWARD_CSOC_LOGS=false \
+	npm run cdk-synth --workspace packages/cdk/
 
-cdk-watch:
-	REQUIRE_APPROVAL="$${REQUIRE_APPROVAL:-any-change}" && \
-	VERSION_NUMBER="$${VERSION_NUMBER:-undefined}" && \
-	COMMIT_ID="$${COMMIT_ID:-undefined}" && \
-		npx cdk deploy \
-		--app "npx ts-node --prefer-ts-exts packages/cdk/bin/VpcResourcesApp.ts" \
-		--watch \
-		--all \
-		--ci true \
-		--require-approval $${REQUIRE_APPROVAL} \
-		--context accountId=$$ACCOUNT_ID \
-		--context stackName=$$stack_name \
-		--context VERSION_NUMBER=$$VERSION_NUMBER \
-		--context COMMIT_ID=$$COMMIT_ID \
-		--context logRetentionInDays=$$LOG_RETENTION_IN_DAYS
+%:
+	@$(MAKE) -f /usr/local/share/eps/Mk/common.mk $@
