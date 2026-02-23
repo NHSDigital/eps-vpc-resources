@@ -1,13 +1,5 @@
 [
     {
-        "LogicalResourceId": "CDKMetadata",
-        "PhysicalResourceId": "e0674c40-b179-11ef-86d0-02a98e48c425",
-        "ResourceType": "AWS::CDK::Metadata",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "CDK metadata resource updates are expected and do not impact the deployed infrastructure. This resource is used by the AWS CDK to store metadata about the CDK app and its environment."
-    },
-    {
         "LogicalResourceId": "CloudWatchEndpointtags8B90CA72",
         "PhysicalResourceId": "1771616408041",
         "ResourceType": "Custom::AWS",
