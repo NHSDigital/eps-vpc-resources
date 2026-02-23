@@ -1,122 +1,52 @@
 [
     {
-        "LogicalResourceId": "CloudWatchEndpointtags8B90CA72",
-        "PhysicalResourceId": "1771616408041",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "CloudWatchEventsEndpointtags65F2F21A",
-        "PhysicalResourceId": "1771616408042",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "CloudWatchLogsEndpointtagsC4F1984D",
-        "PhysicalResourceId": "1771616408042",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "ECRDockerEndpointtags0A151ADD",
-        "PhysicalResourceId": "1771616408012",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "ECREndpointtagsEBA49C33",
-        "PhysicalResourceId": "1771616408039",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "LambdaEndpointtagsAC1A94A8",
-        "PhysicalResourceId": "1771616408044",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "S3EndpointtagsBEFB3080",
-        "PhysicalResourceId": "1771616408045",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "SSMEndpointtags8A6A6FED",
-        "PhysicalResourceId": "1771616408043",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
-        "LogicalResourceId": "SecretManagerEndpointtags4C5B0C8C",
-        "PhysicalResourceId": "1771616408040",
-        "ResourceType": "Custom::AWS",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom resource change with new tags"
-    },
-    {
         "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
         "PhysicalResourceId": "vpc-r-VpcFl-JswGgyraYlpN",
         "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
         "ExpiryDate": "2026-04-01T23:59:59Z",
         "StackName": "vpc-resources",
-        "AllowedReason": "Removing unused policy"
+        "AllowedReason": "dev account - removing unused policy"
     },
     {
-        "LogicalResourceId": "vpcFlowLogCloudwatchFlowLog8F60460E",
-        "PhysicalResourceId": "fl-07b6101554d7d9b85",
-        "ResourceType": "AWS::EC2::FlowLog",
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-f7kB6kcRvHNS",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
         "ExpiryDate": "2026-04-01T23:59:59Z",
         "StackName": "vpc-resources",
-        "AllowedReason": "Flow logs changing with new tags"
+        "AllowedReason": "qa account - removing unused policy"
     },
     {
-        "LogicalResourceId": "vpcPublicSubnet1NATGateway9C16659E",
-        "PhysicalResourceId": "nat-01f5a5e8ac850583f",
-        "ResourceType": "AWS::EC2::NatGateway",
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-D3Wcxuc93JeS",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
         "ExpiryDate": "2026-04-01T23:59:59Z",
         "StackName": "vpc-resources",
-        "AllowedReason": "Nat gateway changing with new tags"
+        "AllowedReason": "ref account - removing unused policy"
     },
     {
-        "LogicalResourceId": "vpcPublicSubnet2NATGateway9B8AE11A",
-        "PhysicalResourceId": "nat-0af60704f8c7e1502",
-        "ResourceType": "AWS::EC2::NatGateway",
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-rBYRcw4F2RrJ",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
         "ExpiryDate": "2026-04-01T23:59:59Z",
         "StackName": "vpc-resources",
-        "AllowedReason": "Nat gateway changing with new tags"
+        "AllowedReason": "int account - removing unused policy"
     },
     {
-        "LogicalResourceId": "vpcPublicSubnet3NATGateway82F6CA9E",
-        "PhysicalResourceId": "nat-0f750745a33ec68f5",
-        "ResourceType": "AWS::EC2::NatGateway",
+        "LogicalResourceId": "VpcFlowLogsRoleDefaultPolicy9C8CF3FB",
+        "PhysicalResourceId": "vpc-r-VpcFl-fq9blAEwykRl",
+        "ResourceType": "AWS::IAM::Policy",
+        "PolicyAction": "Delete",
+        "Action": "Remove",
         "ExpiryDate": "2026-04-01T23:59:59Z",
         "StackName": "vpc-resources",
-        "AllowedReason": "Nat gateway changing with new tags"
-    },
-    {
-        "LogicalResourceId": "vpcRestrictDefaultSecurityGroupCustomResourceA6EBC6D0",
-        "PhysicalResourceId": "db2e7a84-7af7-4884-beb9-04108017a522",
-        "ResourceType": "Custom::VpcRestrictDefaultSG",
-        "ExpiryDate": "2026-04-01T23:59:59Z",
-        "StackName": "vpc-resources",
-        "AllowedReason": "Custom vpc restrict default changing with new tags"
+        "AllowedReason": "prod account - removing unused policy"
     }
 ]
