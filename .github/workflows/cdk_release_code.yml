@@ -200,8 +200,8 @@ jobs:
         env:
           SUMMARY: "[${{ inputs.target_environment }}] FULL CDK Changes for ${{ inputs.DEPLOYED_STACK_NAME }}"
           STACK_NAME: ${{ inputs.DEPLOYED_STACK_NAME }}
-
-        run: ./.github/scripts/describe_cdk_changes.sh
+          DIFF_FILE: ./cdk_deploy_diff_existing_tag.log
+        run: ./.github/scripts/cdk_deploy_diff_new_tag.sh
 
       - name: Check for destructive changes
         shell: bash
