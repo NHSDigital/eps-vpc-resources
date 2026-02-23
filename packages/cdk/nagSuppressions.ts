@@ -50,4 +50,25 @@ export const nagSuppressions = (stack: Stack) => {
     ]
   )
 
+  safeAddNagSuppressionGroup(
+    stack,
+    [
+      "/VpcResourcesStack/vpc/LambdaEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/SSMEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/CloudWatchEventsEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/CloudWatchLogsEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/CloudWatchEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/SecretManagerEndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/ECREndpoint/SecurityGroup/Resource",
+      "/VpcResourcesStack/vpc/ECRDockerEndpoint/SecurityGroup/Resource"
+
+    ],
+    [
+      {
+        id: "AwsSolutions-EC23",
+        reason: "Suppress error for warnings as it gets values from intrinsic functions"
+      }
+    ]
+  )
+
 }
