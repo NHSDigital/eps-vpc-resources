@@ -31,3 +31,4 @@ test/
 .asdf
 cdk.out/
 .npmrc
+.cfn_guard_out/
