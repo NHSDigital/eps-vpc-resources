@@ -4,10 +4,10 @@ import {addCfnGuardMetadata} from "./utils/appUtils"
 
 async function main() {
   const {app, props} = createApp({
-    productName: "Account Resources",
-    appName: "AccountResourcesApp",
-    repoName: "electronic-prescription-service-account-resources",
-    driftDetectionGroup: "account-resources"
+    productName: "VPC Resources",
+    appName: "VpcResourcesApp",
+    repoName: "electronic-prescription-service-vpc-resources",
+    driftDetectionGroup: "vpc-resources"
   })
 
   const availabilityZones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
