@@ -30,3 +30,4 @@ cfn_guard_output/
 test/
 .asdf
 cdk.out/
+.npmrc

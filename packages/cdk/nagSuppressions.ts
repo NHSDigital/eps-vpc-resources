@@ -1,15 +1,29 @@
 
 import {Stack} from "aws-cdk-lib"
-import {NagPackSuppression, NagSuppressions} from "cdk-nag"
+import {safeAddNagSuppression, safeAddNagSuppressionGroup} from "@nhsdigital/eps-cdk-constructs"
 
 export const nagSuppressions = (stack: Stack) => {
-  safeAddNagSuppression(
+  safeAddNagSuppressionGroup(
     stack,
-    "/VpcResourcesStack/ECRDockerEndpoint-tags/CustomResourcePolicy/Resource",
+    [
+      "/VpcResourcesStack/ECRDockerEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/ECREndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/SecretManagerEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/CloudWatchEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/CloudWatchLogsEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/CloudWatchEventsEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/SSMEndpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/S3Endpoint-tags/CustomResourcePolicy/Resource",
+      "/VpcResourcesStack/LambdaEndpoint-tags/CustomResourcePolicy/Resource"
+    ],
     [
       {
         id: "AwsSolutions-IAM5",
         reason: "Suppress error for wildcard permissions. This is fine here"
+      },
+      {
+        id: "EpsNagPack-EPS10",
+        reason: "Suppress error for inline policy. This is fine here"
       }
     ]
   )
@@ -36,102 +50,4 @@ export const nagSuppressions = (stack: Stack) => {
     ]
   )
 
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/ECREndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/SecretManagerEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/CloudWatchEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/CloudWatchLogsEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/CloudWatchEventsEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/SSMEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/S3Endpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-  safeAddNagSuppression(
-    stack,
-    "/VpcResourcesStack/LambdaEndpoint-tags/CustomResourcePolicy/Resource",
-    [
-      {
-        id: "AwsSolutions-IAM5",
-        reason: "Suppress error for wildcard permissions. This is fine here"
-      }
-    ]
-  )
-
-}
-
-const safeAddNagSuppression = (stack: Stack, path: string, suppressions: Array<NagPackSuppression>) => {
-  try {
-    NagSuppressions.addResourceSuppressionsByPath(stack, path, suppressions)
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch(err){
-    console.log(`Could not find path ${path}`)
-  }
 }

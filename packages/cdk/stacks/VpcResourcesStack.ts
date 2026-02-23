@@ -31,7 +31,9 @@ import {nagSuppressions} from "../nagSuppressions"
 
 export interface VpcResourcesStackProps extends StackProps{
   readonly version: string
-  readonly availabilityZones: [string]
+  readonly availabilityZones: Array<string>
+  readonly logRetentionInDays: number
+  readonly forwardCsocLogs: boolean
 }
 
 /**
@@ -44,11 +46,6 @@ export class VpcResourcesStack extends Stack {
   public constructor(scope: App, id: string, props: VpcResourcesStackProps){
     super(scope, id, props)
 
-    // Context
-    /* context values passed as --context cli arguments are passed as strings so coerce them to expected types*/
-    const logRetentionInDays: number = Number(this.node.tryGetContext("logRetentionInDays"))
-    const forwardCsocLogs: boolean = Boolean(this.node.tryGetContext("forwardCsocLogs"))
-
     // Imports
     const cloudwatchKmsKey = Key.fromKeyArn(
       this, "cloudwatchKmsKey", Fn.importValue("account-resources:CloudwatchLogsKmsKeyArn"))
@@ -56,11 +53,11 @@ export class VpcResourcesStack extends Stack {
     // Resources
     const flowLogsRole = new Role(this, "VpcFlowLogsRole", {
       assumedBy: new ServicePrincipal("vpc-flow-logs.amazonaws.com")
-    })
+    }).withoutPolicyUpdates()
 
     const flowLogsLogGroup = new LogGroup(this, "VpcFlowLogsLogGroup", {
       logGroupName: `/aws/vpc/${props.stackName}-vpc-flow-logs`,
-      retention: logRetentionInDays,
+      retention: props.logRetentionInDays,
       encryptionKey: cloudwatchKmsKey,
       removalPolicy: RemovalPolicy.DESTROY
     })
@@ -73,7 +70,7 @@ export class VpcResourcesStack extends Stack {
     }
 
     // Conditionally add S3 flow logs if forwardCsocLogs is true
-    if (forwardCsocLogs) {
+    if (props.forwardCsocLogs) {
       const vpcFlowLogsBucket = Bucket.fromBucketArn(
         this,
         "VpcFlowLogsBucket",
@@ -216,7 +213,5 @@ export class VpcResourcesStack extends Stack {
         resources: AwsCustomResourcePolicy.ANY_RESOURCE
       })
     })
-
   }
-
 }

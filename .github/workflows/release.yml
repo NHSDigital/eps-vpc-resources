@@ -73,14 +73,16 @@ jobs:
       runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_version }}"
       verify_published_from_main_image: true
       TARGET_ENVIRONMENT: dev
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+      VERSION: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+      CDK_APP_NAME: VpcResourcesApp
+      CDK_RESOURCE_STACK_NAME: VpcResourcesStack
+      DEPLOYED_STACK_NAME: vpc-resources
       LOG_RETENTION_IN_DAYS: 30
-      DEPLOY_CHANGE: true
+      DEPLOY_CDK_CODE: true
       FORWARD_CSOC_LOGS: false
     secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.DEV_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
 
   release_ref:
     needs: [tag_release, package_code, get_commit_id, release_dev, get_config_values]
@@ -89,14 +91,16 @@ jobs:
       runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_version }}"
       verify_published_from_main_image: true
       TARGET_ENVIRONMENT: ref
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+      VERSION: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+      CDK_APP_NAME: VpcResourcesApp
+      CDK_RESOURCE_STACK_NAME: VpcResourcesStack
+      DEPLOYED_STACK_NAME: vpc-resources
       LOG_RETENTION_IN_DAYS: 30
-      DEPLOY_CHANGE: true
+      DEPLOY_CDK_CODE: true
       FORWARD_CSOC_LOGS: false
     secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.REF_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.REF_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.REF_CLOUD_FORMATION_DEPLOY_ROLE }}
 
   release_qa:
     needs: [tag_release, package_code, get_commit_id, release_dev, get_config_values]
@@ -105,14 +109,16 @@ jobs:
       runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_version }}"
       verify_published_from_main_image: true
       TARGET_ENVIRONMENT: qa
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+      VERSION: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+      CDK_APP_NAME: VpcResourcesApp
+      CDK_RESOURCE_STACK_NAME: VpcResourcesStack
+      DEPLOYED_STACK_NAME: vpc-resources
       LOG_RETENTION_IN_DAYS: 30
-      DEPLOY_CHANGE: true
+      DEPLOY_CDK_CODE: true
       FORWARD_CSOC_LOGS: false
     secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.QA_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
 
 
   release_int:
@@ -129,14 +135,16 @@ jobs:
       runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_version }}"
       verify_published_from_main_image: true
       TARGET_ENVIRONMENT: int
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+      VERSION: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+      CDK_APP_NAME: VpcResourcesApp
+      CDK_RESOURCE_STACK_NAME: VpcResourcesStack
+      DEPLOYED_STACK_NAME: vpc-resources
       LOG_RETENTION_IN_DAYS: 30
-      DEPLOY_CHANGE: true
+      DEPLOY_CDK_CODE: true
       FORWARD_CSOC_LOGS: false
     secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.INT_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.INT_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.INT_CLOUD_FORMATION_DEPLOY_ROLE }}
 
   release_prod:
     needs: [tag_release, package_code, get_commit_id, release_int, get_config_values]
@@ -145,11 +153,13 @@ jobs:
       runtime_docker_image: "${{ needs.get_config_values.outputs.devcontainer_image }}:githubactions-${{ needs.get_config_values.outputs.devcontainer_version }}"
       verify_published_from_main_image: true
       TARGET_ENVIRONMENT: prod
-      VERSION_NUMBER: ${{needs.tag_release.outputs.version_tag}}
+      VERSION: ${{needs.tag_release.outputs.version_tag}}
       COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
+      CDK_APP_NAME: VpcResourcesApp
+      CDK_RESOURCE_STACK_NAME: VpcResourcesStack
+      DEPLOYED_STACK_NAME: vpc-resources
       LOG_RETENTION_IN_DAYS: 30
-      DEPLOY_CHANGE: true
+      DEPLOY_CDK_CODE: true
       FORWARD_CSOC_LOGS: true
     secrets:
-      CDK_PULL_IMAGE_ROLE: ${{ secrets.PROD_CDK_PULL_IMAGE_ROLE }}
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_DEPLOY_ROLE }}
