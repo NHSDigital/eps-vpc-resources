@@ -119,4 +119,4 @@ jobs:
       DEPLOY_CDK_CODE: false
       FORWARD_CSOC_LOGS: false
     secrets:
-      CDK_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
+      CDK_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
