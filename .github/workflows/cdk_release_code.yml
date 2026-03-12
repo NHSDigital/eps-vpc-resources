@@ -223,17 +223,16 @@ jobs:
         run: |
           cd gh-pages
           NOW=$(date +'%Y-%m-%dT%H:%M:%S')
-          echo "tag,release_datetime" > "_data/${TARGET_ENVIRONMENT}_${STACK_NAME}_${AWS_REGION}_latest.csv"
-          echo "${VERSION},${NOW}" >> "_data/${TARGET_ENVIRONMENT}_${STACK_NAME}_${AWS_REGION}_latest.csv"
-          echo "${VERSION},${NOW}" >> "_data/${TARGET_ENVIRONMENT}_${STACK_NAME}_${AWS_REGION}_deployments.csv"
+          echo "tag,release_datetime" > "_data/${TARGET_ENVIRONMENT}_latest.csv"
+          echo "${VERSION},${NOW}" >> "_data/${TARGET_ENVIRONMENT}_latest.csv"
+          echo "${VERSION},${NOW}" >> "_data/${TARGET_ENVIRONMENT}_deployments.csv"
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add "_data/${TARGET_ENVIRONMENT}_${STACK_NAME}_${AWS_REGION}_latest.csv"
-          git add "_data/${TARGET_ENVIRONMENT}_${STACK_NAME}_${AWS_REGION}_deployments.csv"
+          git add "_data/${TARGET_ENVIRONMENT}_latest.csv"
+          git add "_data/${TARGET_ENVIRONMENT}_deployments.csv"
           git commit -m "update releases for ${TARGET_ENVIRONMENT} and stack ${STACK_NAME}"
           parallel --retries 10 --delay 3 ::: "git pull --rebase && git push"
         env:
           STACK_NAME: ${{ inputs.DEPLOYED_STACK_NAME }}
           TARGET_ENVIRONMENT: ${{ inputs.TARGET_ENVIRONMENT }}
           VERSION: ${{ inputs.VERSION }}
-          AWS_REGION: ${{ inputs.AWS_REGION }}
