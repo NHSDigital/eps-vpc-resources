@@ -32,3 +32,4 @@ test/
 cdk.out/
 .npmrc
 .cfn_guard_out/
+.trivy_out/
