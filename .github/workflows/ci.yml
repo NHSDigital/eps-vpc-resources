@@ -9,7 +9,7 @@ env:
 
 jobs:
   get_config_values:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
 
   quality_checks:
     uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks-devcontainer.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
