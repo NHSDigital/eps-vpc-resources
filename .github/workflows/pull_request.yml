@@ -9,17 +9,17 @@ env:
 
 jobs:
   get_config_values:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
 
   dependabot-auto-approve-and-merge:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/dependabot-auto-approve-and-merge.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/dependabot-auto-approve-and-merge.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
     secrets:
       AUTOMERGE_APP_ID: ${{ secrets.AUTOMERGE_APP_ID }}
       AUTOMERGE_PEM: ${{ secrets.AUTOMERGE_PEM }}
 
 
   quality_checks:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks-devcontainer.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks-devcontainer.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
     needs: [get_config_values]
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
@@ -27,7 +27,7 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   pr_title_format_check:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
 
   get_issue_number:
     runs-on: ubuntu-22.04
@@ -57,7 +57,7 @@ jobs:
 
   tag_release:
     needs: [get_config_values]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release-devcontainer.yml@7a89b111ae752548e8e3f3fbaeb89bd6ecca0698
+    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release-devcontainer.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
     permissions:
       id-token: write
       contents: write
