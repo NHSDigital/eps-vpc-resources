@@ -11,7 +11,7 @@ jobs:
     uses: NHSDigital/eps-common-workflows/.github/workflows/get-repo-config.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
 
   quality_checks:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks-devcontainer.yml@dac60c1e29babc62013e7bb9ade002cb381c4c49
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks-devcontainer.yml@6713f00b9a29ae0ffc42b50dc610cb252d601181
     needs: [get_config_values]
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
