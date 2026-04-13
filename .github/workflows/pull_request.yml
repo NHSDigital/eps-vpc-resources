@@ -103,6 +103,9 @@ jobs:
   show_dev_changes:
     needs: [quality_checks, get_issue_number, package_code, get_commit_id, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: dev

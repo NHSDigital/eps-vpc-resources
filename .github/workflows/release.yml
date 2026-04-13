@@ -65,6 +65,9 @@ jobs:
   release_dev:
     needs: [tag_release, package_code, get_commit_id, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: dev
@@ -82,6 +85,9 @@ jobs:
   release_ref:
     needs: [tag_release, package_code, get_commit_id, release_dev, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: ref
@@ -99,6 +105,9 @@ jobs:
   release_qa:
     needs: [tag_release, package_code, get_commit_id, release_dev, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: qa
@@ -124,6 +133,9 @@ jobs:
         get_config_values,
       ]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: int
@@ -141,6 +153,9 @@ jobs:
   release_prod:
     needs: [tag_release, package_code, get_commit_id, release_int, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: prod

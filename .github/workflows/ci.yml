@@ -63,6 +63,9 @@ jobs:
   release_dev:
     needs: [tag_release, package_code, get_commit_id, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       TARGET_ENVIRONMENT: dev
       VERSION: ${{needs.tag_release.outputs.version_tag}}
@@ -80,6 +83,9 @@ jobs:
   release_qa:
     needs: [tag_release, release_dev, package_code, get_commit_id, get_config_values]
     uses: ./.github/workflows/cdk_release_code.yml
+    permissions:
+      contents: read
+      id-token: write
     with:
       pinned_image: "${{ needs.get_config_values.outputs.pinned_image }}"
       TARGET_ENVIRONMENT: qa
